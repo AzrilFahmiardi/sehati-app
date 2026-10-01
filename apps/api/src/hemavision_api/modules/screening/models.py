@@ -194,3 +194,6 @@ class ClinicalValidation(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     lab_confirmation: Mapped[dict[str, object] | None] = mapped_column(
         postgresql.JSONB, nullable=True
     )
+    digital_signature: Mapped[dict[str, object] | None] = mapped_column(
+        postgresql.JSONB, nullable=True
+    )
