@@ -345,6 +345,14 @@ export async function submitValidation(
           notes: payload.labConfirmation.notes,
         }
       : null,
+    digital_signature: payload.digitalSignature
+      ? {
+          signer_name: payload.digitalSignature.signerName,
+          signer_role: payload.digitalSignature.signerRole,
+          facility_name: payload.digitalSignature.facilityName,
+          signed_at: payload.digitalSignature.signedAt,
+        }
+      : null,
   };
 
   const response = await apiFetch(`/v1/screenings/${screeningId}/validate`, {
@@ -403,6 +411,14 @@ export async function getValidation(
           analystName: body.lab_confirmation.analyst_name,
           status: body.lab_confirmation.status,
           notes: body.lab_confirmation.notes,
+        }
+      : undefined,
+    digitalSignature: body.digital_signature
+      ? {
+          signerName: body.digital_signature.signer_name,
+          signerRole: body.digital_signature.signer_role,
+          facilityName: body.digital_signature.facility_name,
+          signedAt: body.digital_signature.signed_at,
         }
       : undefined,
   };

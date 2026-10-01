@@ -265,6 +265,7 @@ def submit_validation(
             formatted_timestamp=request.formatted_timestamp,
             original_ai_result=request.original_ai_result,
             lab_confirmation=request.lab_confirmation,
+            digital_signature=request.digital_signature,
         )
         session.add(validation)
     else:
@@ -278,6 +279,7 @@ def submit_validation(
         validation.formatted_timestamp = request.formatted_timestamp
         validation.original_ai_result = request.original_ai_result
         validation.lab_confirmation = request.lab_confirmation
+        validation.digital_signature = request.digital_signature
 
     session.commit()
     return validation

@@ -38,6 +38,7 @@ import { ScreeningExplanation } from "@/types/explanation";
 import { ClinicalReportPrintView } from "@/components/reports/ClinicalReportPrintView";
 import { HbConfirmationModal, LabConfirmationData } from "@/features/follow-up/HbConfirmationModal";
 import { ReferralDecisionCard } from "@/features/follow-up/ReferralDecisionCard";
+import { DigitalVerificationCard } from "@/features/reports/DigitalVerificationCard";
 
 const SITE_META: Record<string, { title: string; icon: typeof Eye }> = {
   conjunctiva: { title: "Konjungtiva Mata", icon: Eye },
@@ -259,6 +260,7 @@ function ClinicalResultsContent() {
   const [explanationError, setExplanationError] = useState<string | null>(null);
   const [isPrintReportOpen, setIsPrintReportOpen] = useState(false);
   const [isLabModalOpen, setIsLabModalOpen] = useState(false);
+  const [pendingLabMarked, setPendingLabMarked] = useState(false);
 
   const storageKey = `hv_validation_${screeningId}`;
 
@@ -565,6 +567,31 @@ function ClinicalResultsContent() {
     [aiSnapshot, validationRecord, rawScreeningId, organizationId, storageKey]
   );
 
+  const handleDigitalSign = useCallback(async () => {
+    if (!validationRecord || !aiSnapshot) return;
+
+    const signatureData = {
+      signerName: validationRecord.reviewerName,
+      signerRole: validationRecord.reviewerRole,
+      facilityName: "Fasilitas Kesehatan",
+      signedAt: new Date().toISOString(),
+    };
+
+    const updatedRecord = {
+      ...validationRecord,
+      digitalSignature: signatureData,
+    };
+
+    if (rawScreeningId && organizationId) {
+      await submitValidation(rawScreeningId, organizationId, updatedRecord);
+    }
+
+    setValidationRecord(updatedRecord);
+    sessionStorage.setItem(storageKey, JSON.stringify(updatedRecord));
+    setSuccessToast("Lembar verifikasi digital berhasil ditandatangani secara elektronik.");
+    setTimeout(() => setSuccessToast(null), 4000);
+  }, [validationRecord, aiSnapshot, rawScreeningId, organizationId, storageKey]);
+
 
   return (
     <div className="w-full min-h-screen bg-surface font-sans text-on-surface pt-6 sm:pt-8 lg:pt-10 px-6 sm:px-8 lg:px-10 pb-56 space-y-6">
@@ -866,12 +893,35 @@ function ClinicalResultsContent() {
             </div>
         </div>
 
-        {/* 3.5 REKOMENDASI TINDAK LANJUT (Lab Confirmation) */}
+        {/* 3.5 REKOMENDASI TINDAK LANJUT & LEMBAR VERIFIKASI DIGITAL */}
         {status === "completed" && fusedResult && (
-          <ReferralDecisionCard
-            onOpenLabModal={() => setIsLabModalOpen(true)}
-            onGenerateReport={() => setIsPrintReportOpen(true)}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            <ReferralDecisionCard
+              onOpenLabModal={() => setIsLabModalOpen(true)}
+              onMarkPendingLab={() => {
+                setPendingLabMarked((prev) => !prev);
+                setSuccessToast(
+                  !pendingLabMarked
+                    ? "Pasien berhasil ditandai 'Menunggu Konfirmasi Lab'"
+                    : "Status 'Menunggu Konfirmasi Lab' dibatalkan."
+                );
+                setTimeout(() => setSuccessToast(null), 4000);
+              }}
+              pendingLabMarked={pendingLabMarked}
+              labConfirmed={!!validationRecord?.labConfirmation}
+              labHbValue={validationRecord?.labConfirmation?.labHbValue}
+            />
+
+            <DigitalVerificationCard
+              screeningId={rawScreeningId ? `SEHATI-SCR-${screeningId.slice(0, 4).toUpperCase()}` : "SEHATI-SCR-0000"}
+              timestamp={getFormattedTimestamp()}
+              nakesName={validationRecord?.reviewerName ?? "Tenaga Kesehatan"}
+              facilityName="Fasilitas Kesehatan"
+              isSigned={!!validationRecord?.digitalSignature}
+              signatureData={validationRecord?.digitalSignature ?? null}
+              onSign={handleDigitalSign}
+            />
+          </div>
         )}
 
         {/* 4. PROMINENT HUMAN-IN-THE-LOOP SECTION: VALIDASI TENAGA KESEHATAN */}

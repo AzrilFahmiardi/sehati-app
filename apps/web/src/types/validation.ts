@@ -32,6 +32,13 @@ export interface LabConfirmation {
   notes?: string;
 }
 
+export interface DigitalSignature {
+  signerName: string;
+  signerRole: string;
+  facilityName: string;
+  signedAt: string;
+}
+
 export interface ClinicalValidationRecord {
   status: "confirmed" | "needs_review";
   reviewerName: string;
@@ -43,4 +50,5 @@ export interface ClinicalValidationRecord {
   notes?: string;
   originalAiResult: OriginalAiSnapshot;
   labConfirmation?: LabConfirmation;
+  digitalSignature?: DigitalSignature;
 }
