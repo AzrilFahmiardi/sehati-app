@@ -125,17 +125,32 @@ def submit_screening(
         if actual_size is None or actual_size != upload.bytes:
             raise ObjectNotUploadedError(upload.site)
 
+    if screening.status != "draft":
+        return
+
     for upload in uploads:
-        session.add(
-            ScreeningCapture(
-                screening_id=screening.id,
-                site=upload.site,
-                object_key=object_key_for(screening.id, upload.site),
-                sha256=upload.sha256,
-                bytes=upload.bytes,
-                content_type=UPLOAD_CONTENT_TYPE,
+        existing_capture = session.execute(
+            select(ScreeningCapture).where(
+                ScreeningCapture.screening_id == screening.id,
+                ScreeningCapture.site == upload.site,
             )
-        )
+        ).scalar_one_or_none()
+
+        if existing_capture is None:
+            session.add(
+                ScreeningCapture(
+                    screening_id=screening.id,
+                    site=upload.site,
+                    object_key=object_key_for(screening.id, upload.site),
+                    sha256=upload.sha256,
+                    bytes=upload.bytes,
+                    content_type=UPLOAD_CONTENT_TYPE,
+                )
+            )
+        else:
+            existing_capture.sha256 = upload.sha256
+            existing_capture.bytes = upload.bytes
+            existing_capture.object_key = object_key_for(screening.id, upload.site)
 
     with rls_scope(
         session, organization_path=organization_path, user_id=str(performed_by_user_id), role=role
