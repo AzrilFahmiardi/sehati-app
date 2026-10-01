@@ -102,6 +102,21 @@ const config: Config = {
         "scan-glow-sm": "0 0 10px #9CF2E8",
         "scan-line": "0 0 12px #80D5CB",
       },
+      keyframes: {
+        spotlight: {
+          "0%": {
+            opacity: "0",
+            transform: "translate(-72%, -62%) scale(0.5)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translate(-50%, -40%) scale(1)",
+          },
+        },
+      },
+      animation: {
+        spotlight: "spotlight 2s ease 0.75s 1 forwards",
+      },
       fontFamily: {
         sans: [
           "var(--font-inter)",
