@@ -1,0 +1,19 @@
+{
+  "version": "0.1.0-provisional",
+  "calibrated": false,
+  "server": {
+    "source": "hemavision/src/common/qc.py DEFAULT_THRESHOLDS",
+    "minLaplacianVariance": 2.0,
+    "minBrightness": 25.0,
+    "maxBrightness": 245.0,
+    "maxGlareFraction": 0.3,
+    "minRoiPixels": 300
+  },
+  "client": {
+    "minLaplacianVariance": 80.0,
+    "minBrightness": 60.0,
+    "maxBrightness": 210.0,
+    "maxGlareFraction": 0.12,
+    "minRoiPixels": 8000
+  }
+}
