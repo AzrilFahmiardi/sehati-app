@@ -1,0 +1,18 @@
+export const QC_REASON_LABELS: Record<string, string> = {
+  blur: "Gambar buram",
+  underexposed: "Pencahayaan kurang",
+  overexposed: "Pencahayaan berlebih",
+  glare: "Silau/pantulan cahaya",
+  roi_too_small: "Area target terlalu kecil",
+  no_hand_detected: "Tangan tidak terdeteksi",
+  segmentation_failed: "Objek target tidak terdeteksi",
+  roi_fragmented: "Area target terdeteksi terpisah-pisah, posisikan ulang",
+  roi_too_thin: "Area target terlalu sempit, pastikan objek terlihat penuh",
+  roi_low_solidity: "Area target tidak utuh, pastikan objek terlihat jelas",
+  roi_coverage_low: "Objek target terlalu kecil di frame, dekatkan kamera",
+  roi_off_center: "Objek tidak di posisi yang tepat, sesuaikan dengan panduan",
+  roi_confidence_low: "Objek target tidak terdeteksi dengan jelas, coba lagi",
+  roi_landmark_unreliable: "Tangan tidak terdeteksi dengan jelas, buka telapak sepenuhnya",
+  roi_finger_area_abnormal: "Jari tidak terdeteksi dengan benar, posisikan sesuai panduan",
+  roi_nail_area_abnormal: "Area kuku terlalu kecil, dekatkan jari ke kamera",
+};

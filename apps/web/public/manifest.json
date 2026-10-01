@@ -1,0 +1,32 @@
+{
+  "short_name": "SEHATI",
+  "name": "SEHATI: Sistem Skrining Dini Anemia Berbantuan AI",
+  "description": "Platform CDSS Pra-Skrining Anemia Non-Invasif Berbasis AI",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F9F9FF",
+  "theme_color": "#0D5C75",
+  "display": "standalone",
+  "orientation": "any",
+  "categories": ["medical", "health", "screening"]
+}
