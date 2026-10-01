@@ -313,7 +313,7 @@ export async function submitValidation(
   payload: ClinicalValidationRecord
 ): Promise<void> {
   // Translate the payload to snake_case for the Python backend
-  const requestBody = {
+  const requestBody: Record<string, unknown> = {
     organization_id: organizationId,
     status: payload.status,
     reviewer_name: payload.reviewerName,
@@ -333,7 +333,18 @@ export async function submitValidation(
       recommendation_body: payload.originalAiResult.recommendationBody,
       site_count: payload.originalAiResult.siteCount,
       passed_qc_count: payload.originalAiResult.passedQcCount,
-    }
+    },
+    lab_confirmation: payload.labConfirmation
+      ? {
+          lab_hb_value: payload.labConfirmation.labHbValue,
+          test_date: payload.labConfirmation.testDate,
+          method: payload.labConfirmation.method,
+          lab_facility: payload.labConfirmation.labFacility,
+          analyst_name: payload.labConfirmation.analystName,
+          status: payload.labConfirmation.status,
+          notes: payload.labConfirmation.notes,
+        }
+      : null,
   };
 
   const response = await apiFetch(`/v1/screenings/${screeningId}/validate`, {
@@ -383,6 +394,17 @@ export async function getValidation(
       siteCount: body.original_ai_result.site_count,
       passedQcCount: body.original_ai_result.passed_qc_count,
     },
+    labConfirmation: body.lab_confirmation
+      ? {
+          labHbValue: body.lab_confirmation.lab_hb_value,
+          testDate: body.lab_confirmation.test_date,
+          method: body.lab_confirmation.method,
+          labFacility: body.lab_confirmation.lab_facility,
+          analystName: body.lab_confirmation.analyst_name,
+          status: body.lab_confirmation.status,
+          notes: body.lab_confirmation.notes,
+        }
+      : undefined,
   };
 }
 

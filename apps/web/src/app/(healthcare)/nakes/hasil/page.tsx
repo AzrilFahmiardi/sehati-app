@@ -36,6 +36,8 @@ import { AIExplanationCard } from "@/components/explanation/AIExplanationCard";
 import { generateScreeningExplanation, getScreeningExplanation } from "@/services/screening";
 import { ScreeningExplanation } from "@/types/explanation";
 import { ClinicalReportPrintView } from "@/components/reports/ClinicalReportPrintView";
+import { HbConfirmationModal, LabConfirmationData } from "@/features/follow-up/HbConfirmationModal";
+import { ReferralDecisionCard } from "@/features/follow-up/ReferralDecisionCard";
 
 const SITE_META: Record<string, { title: string; icon: typeof Eye }> = {
   conjunctiva: { title: "Konjungtiva Mata", icon: Eye },
@@ -256,6 +258,7 @@ function ClinicalResultsContent() {
   const [explanationLoading, setExplanationLoading] = useState(false);
   const [explanationError, setExplanationError] = useState<string | null>(null);
   const [isPrintReportOpen, setIsPrintReportOpen] = useState(false);
+  const [isLabModalOpen, setIsLabModalOpen] = useState(false);
 
   const storageKey = `hv_validation_${screeningId}`;
 
@@ -529,6 +532,38 @@ function ClinicalResultsContent() {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
+  const handleLabConfirmationSave = useCallback(
+    async (data: LabConfirmationData) => {
+      if (!aiSnapshot || !validationRecord) return;
+
+      const updatedRecord = {
+        ...validationRecord,
+        labConfirmation: {
+          labHbValue: data.labHbValue,
+          testDate: data.testDate,
+          method: data.method,
+          labFacility: data.labFacility,
+          analystName: data.analystName,
+          status: data.status,
+          notes: data.notes,
+        },
+      };
+
+      try {
+        if (rawScreeningId && organizationId) {
+          await submitValidation(rawScreeningId, organizationId, updatedRecord);
+        }
+        setValidationRecord(updatedRecord);
+        sessionStorage.setItem(storageKey, JSON.stringify(updatedRecord));
+        setSuccessToast("Hasil konfirmasi laboratorium berhasil disimpan!");
+        setTimeout(() => setSuccessToast(null), 4000);
+      } catch {
+        setSaveError("Gagal menyimpan hasil konfirmasi laboratorium.");
+      }
+    },
+    [aiSnapshot, validationRecord, rawScreeningId, organizationId, storageKey]
+  );
 
 
   return (
@@ -831,6 +866,14 @@ function ClinicalResultsContent() {
             </div>
         </div>
 
+        {/* 3.5 REKOMENDASI TINDAK LANJUT (Lab Confirmation) */}
+        {status === "completed" && fusedResult && (
+          <ReferralDecisionCard
+            onOpenLabModal={() => setIsLabModalOpen(true)}
+            onGenerateReport={() => setIsPrintReportOpen(true)}
+          />
+        )}
+
         {/* 4. PROMINENT HUMAN-IN-THE-LOOP SECTION: VALIDASI TENAGA KESEHATAN */}
         <ClinicalValidationSection
           validationRecord={validationRecord}
@@ -962,6 +1005,15 @@ function ClinicalResultsContent() {
         isLoading={isValidating}
         aiSnapshot={aiSnapshot}
         initialNotes={clinicalNotes}
+      />
+
+      {/* Lab Confirmation Modal */}
+      <HbConfirmationModal
+        isOpen={isLabModalOpen}
+        onClose={() => setIsLabModalOpen(false)}
+        screeningId={screeningId}
+        estimatedAiHb={fusedResult?.hbGdl}
+        onSave={handleLabConfirmationSave}
       />
 
       {/* Stage Image Lightbox */}
