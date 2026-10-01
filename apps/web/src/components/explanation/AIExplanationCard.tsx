@@ -88,9 +88,6 @@ export function AIExplanationCard({
           {/* Headline & Summary */}
           <div className="p-4 rounded-xl bg-primary-container/20 border border-primary/20 space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-primary text-white text-[10px] font-bold uppercase tracking-wider font-mono">
-                Ringkasan Klinis
-              </span>
               <h4 className="font-bold text-sm text-on-surface">
                 {explanation.content.headline}
               </h4>

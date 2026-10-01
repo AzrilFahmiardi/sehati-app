@@ -264,6 +264,7 @@ def submit_validation(
             validated_at=datetime.fromisoformat(request.validated_at.replace("Z", "+00:00")),
             formatted_timestamp=request.formatted_timestamp,
             original_ai_result=request.original_ai_result,
+            lab_confirmation=request.lab_confirmation,
         )
         session.add(validation)
     else:
@@ -276,6 +277,7 @@ def submit_validation(
         validation.validated_at = datetime.fromisoformat(request.validated_at.replace("Z", "+00:00"))  # noqa: E501
         validation.formatted_timestamp = request.formatted_timestamp
         validation.original_ai_result = request.original_ai_result
+        validation.lab_confirmation = request.lab_confirmation
 
     session.commit()
     return validation
