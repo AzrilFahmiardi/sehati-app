@@ -104,6 +104,7 @@ class ClinicalValidationRequest(BaseModel):
     validated_at: str
     formatted_timestamp: str
     original_ai_result: dict[str, object]
+    lab_confirmation: dict[str, object] | None = None
 
 
 class ClinicalValidationResponse(BaseModel):
@@ -116,6 +117,7 @@ class ClinicalValidationResponse(BaseModel):
     validated_at: str
     formatted_timestamp: str
     original_ai_result: dict[str, object]
+    lab_confirmation: dict[str, object] | None = None
 
 
 class ScreeningStatusResponse(BaseModel):
@@ -516,5 +518,6 @@ def get_validation_record(
         validated_at=record.validated_at.isoformat(),
         formatted_timestamp=record.formatted_timestamp,
         original_ai_result=record.original_ai_result,
+        lab_confirmation=record.lab_confirmation,
     )
 
