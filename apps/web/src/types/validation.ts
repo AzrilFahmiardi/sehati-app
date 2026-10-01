@@ -22,14 +22,25 @@ export interface OriginalAiSnapshot {
   passedQcCount: number;
 }
 
+export interface LabConfirmation {
+  labHbValue: number;
+  testDate: string;
+  method: string;
+  labFacility: string;
+  analystName: string;
+  status: "normal" | "mild" | "moderate" | "severe";
+  notes?: string;
+}
+
 export interface ClinicalValidationRecord {
   status: "confirmed" | "needs_review";
   reviewerName: string;
   reviewerRole: string;
   reviewerId?: string;
-  validatedAt: string; // ISO date string
+  validatedAt: string;
   formattedTimestamp: string;
   reason?: DisagreementReason | string;
   notes?: string;
   originalAiResult: OriginalAiSnapshot;
+  labConfirmation?: LabConfirmation;
 }
